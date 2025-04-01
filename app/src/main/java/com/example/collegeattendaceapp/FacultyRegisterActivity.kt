@@ -1,8 +1,10 @@
 package com.example.collegeattendaceapp
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -33,6 +35,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.database.FirebaseDatabase
 
 class FacultyRegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +58,7 @@ fun RegistrationScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.p1)),
+            .background(color = colorResource(id = R.color.white)),
     ) {
 
         Column(
@@ -67,16 +70,16 @@ fun RegistrationScreen() {
 
             Text(
                 text = "Register",
-                color = colorResource(id = R.color.white),
+                color = colorResource(id = R.color.p1),
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(bottom = 4.dp).align(Alignment.CenterHorizontally)
             )
 
             Text(
                 text = "Hello, Welcome!",
-                color = colorResource(id = R.color.white),
+                color = colorResource(id = R.color.p1),
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 32.dp)
+                modifier = Modifier.padding(bottom = 32.dp).align(Alignment.CenterHorizontally)
             )
 
             Column (
@@ -171,7 +174,13 @@ fun RegistrationScreen() {
                             }
 
                             else -> {
-//                            signInGuest(useremail, userpassword, context)
+                                val facultyDetails = FacultyDetails(
+                                    userName,
+                                    useremail,
+                                    userLocation,
+                                    userpassword
+                                )
+                                registerUser(facultyDetails,context);
                             }
 
                         }
@@ -199,7 +208,7 @@ fun RegistrationScreen() {
             ) {
                 Text(
                     text = "Already a member? ",
-                    color = colorResource(id = R.color.white),
+                    color = colorResource(id = R.color.p1),
                     style = MaterialTheme.typography.bodyLarge,
                 )
 
@@ -220,6 +229,42 @@ fun RegistrationScreen() {
     }
 
 }
+
+fun registerUser(facultyDetails: FacultyDetails, context: Context) {
+
+    val firebaseDatabase = FirebaseDatabase.getInstance()
+    val databaseReference = firebaseDatabase.getReference("FacultyDetails")
+
+    databaseReference.child(facultyDetails.emailid.replace(".", ","))
+        .setValue(facultyDetails)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(context, "You Registered Successfully", Toast.LENGTH_SHORT)
+                    .show()
+
+            } else {
+                Toast.makeText(
+                    context,
+                    "Registration Failed",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+        .addOnFailureListener { _ ->
+            Toast.makeText(
+                context,
+                "Something went wrong",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+}
+
+data class FacultyDetails(
+    var name : String = "",
+    var emailid : String = "",
+    var location : String = "",
+    var password: String = ""
+)
 
 @Preview(showBackground = true)
 @Composable

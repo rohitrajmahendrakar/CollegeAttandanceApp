@@ -1,8 +1,10 @@
 package com.example.collegeattendaceapp
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -37,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.database.FirebaseDatabase
 
 class FacultyLoginActivity : ComponentActivity() {
 
@@ -59,7 +62,7 @@ fun LoginScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.p1)),
+            .background(color = colorResource(id = R.color.white)),
     ) {
 
         Column(
@@ -71,16 +74,16 @@ fun LoginScreen() {
 
             Text(
                 text = "Login",
-                color = colorResource(id = R.color.white),
+                color = colorResource(id = R.color.p1),
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(bottom = 4.dp).align(Alignment.CenterHorizontally)
             )
 
             Text(
                 text = "Hello, Welcome Back!",
-                color = colorResource(id = R.color.white),
+                color = colorResource(id = R.color.p1),
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 32.dp)
+                modifier = Modifier.padding(bottom = 32.dp).align(Alignment.CenterHorizontally)
             )
 
             Column(
@@ -144,7 +147,14 @@ fun LoginScreen() {
                             }
 
                             else -> {
-//                            signInGuest(useremail, userpassword, context)
+                                val facultyDetails = FacultyDetails(
+                                    "",
+                                    useremail,
+                                    "",
+                                    userpassword
+                                )
+
+                                loginUser(facultyDetails,context)
                             }
 
                         }
@@ -170,7 +180,7 @@ fun LoginScreen() {
             ) {
                 Text(
                     text = "Not a member yet? ",
-                    color = colorResource(id = R.color.white),
+                    color = colorResource(id = R.color.p1),
                     style = MaterialTheme.typography.bodyLarge,
                 )
 
@@ -193,6 +203,38 @@ fun LoginScreen() {
     }
 
 }
+
+
+fun loginUser(facultyDetails: FacultyDetails, context: Context) {
+
+    val firebaseDatabase = FirebaseDatabase.getInstance()
+    val databaseReference = firebaseDatabase.getReference("FacultyDetails").child(facultyDetails.emailid.replace(".", ","))
+
+    databaseReference.get().addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            val donorData = task.result?.getValue(FacultyDetails::class.java)
+            if (donorData != null) {
+                if (donorData.password == facultyDetails.password) {
+
+                    Toast.makeText(context, "Login Sucessfully", Toast.LENGTH_SHORT).show()
+
+                } else {
+                    Toast.makeText(context, "Seems Incorrect Credentials", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(context, "Your account not found", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(
+                context,
+                "Something went wrong",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable

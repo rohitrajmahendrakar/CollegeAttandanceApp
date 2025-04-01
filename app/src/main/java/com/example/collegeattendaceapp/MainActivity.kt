@@ -1,47 +1,159 @@
 package com.example.collegeattendaceapp
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.collegeattendaceapp.ui.theme.CollegeAttendaceAppTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            CollegeAttendaceAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+            FacultyStatusCheck()
         }
     }
 }
 
+
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun FacultyStatusCheck() {
+    val context = LocalContext.current as Activity
+    var showSplash by remember { mutableStateOf(true) }
+
+    DisposableEffect(Unit) {
+        val job = CoroutineScope(Dispatchers.Main).launch {
+            delay(3000)
+            showSplash = false
+        }
+        onDispose { job.cancel() }
+    }
+
+    if (showSplash) {
+        SplashScreen()
+
+    } else {
+        context.startActivity(Intent(context, FacultyLoginActivity::class.java))
+        context.finish()
+    }
+
 }
+
+@Composable
+fun SplashScreen() {
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = colorResource(id = R.color.white)),
+    ) {
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Spacer(modifier = Modifier.height(100.dp))
+
+            Text(
+                text = "College Attendance App",
+                color = colorResource(id = R.color.p1),
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Column(
+                modifier = Modifier
+                    .align(alignment = Alignment.CenterHorizontally)
+                    .background(
+                        color = colorResource(id = R.color.white),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = colorResource(id = R.color.white),
+                        shape = RoundedCornerShape(6.dp)
+                    )
+                    .padding(16.dp),
+
+                )
+            {
+                Image(
+                    modifier = Modifier.size(200.dp, 200.dp),
+                    painter = painterResource(id = R.drawable.college),
+                    contentDescription = "College Attendance App",
+                )
+
+
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+
+
+            Text(
+                text = "By",
+                color = colorResource(id = R.color.p3),
+                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+
+            Text(
+                text = "Rohit",
+                color = colorResource(id = R.color.p3),
+                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+
+
+        }
+    }
+
+}
+
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    CollegeAttendaceAppTheme {
-        Greeting("Android")
-    }
+fun SplashScreenPreview() {
+    SplashScreen()
 }
+
