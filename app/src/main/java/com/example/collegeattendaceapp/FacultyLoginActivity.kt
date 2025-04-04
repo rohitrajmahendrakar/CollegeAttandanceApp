@@ -138,12 +138,12 @@ fun LoginScreen() {
                     onClick = {
                         when {
                             useremail.isEmpty() -> {
-//                            Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT).show()
                             }
 
                             userpassword.isEmpty() -> {
-//                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
-//                                .show()
+                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
+                                .show()
                             }
 
                             else -> {
@@ -217,6 +217,7 @@ fun loginUser(facultyDetails: FacultyDetails, context: Context) {
                 if (donorData.password == facultyDetails.password) {
 
                     Toast.makeText(context, "Login Sucessfully", Toast.LENGTH_SHORT).show()
+                    context.startActivity(Intent(context, FacultyHomeActivity::class.java))
 
                 } else {
                     Toast.makeText(context, "Seems Incorrect Credentials", Toast.LENGTH_SHORT).show()
