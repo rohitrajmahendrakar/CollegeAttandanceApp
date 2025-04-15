@@ -68,8 +68,19 @@ fun FacultyStatusCheck() {
         SplashScreen()
 
     } else {
-        context.startActivity(Intent(context, FacultyLoginActivity::class.java))
-        context.finish()
+
+        val currentStatus = CollegeData.readLS(context)
+
+        if(currentStatus)
+        {
+            context.startActivity(Intent(context, FacultyHomeActivity::class.java))
+            context.finish()
+        }else{
+            context.startActivity(Intent(context, FacultyLoginActivity::class.java))
+            context.finish()
+        }
+
+
     }
 
 }

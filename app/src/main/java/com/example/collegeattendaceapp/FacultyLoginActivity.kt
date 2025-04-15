@@ -212,9 +212,13 @@ fun loginUser(facultyDetails: FacultyDetails, context: Context) {
 
     databaseReference.get().addOnCompleteListener { task ->
         if (task.isSuccessful) {
-            val donorData = task.result?.getValue(FacultyDetails::class.java)
-            if (donorData != null) {
-                if (donorData.password == facultyDetails.password) {
+            val studentData = task.result?.getValue(FacultyDetails::class.java)
+            if (studentData != null) {
+                if (studentData.password == facultyDetails.password) {
+
+                    CollegeData.writeLS(context, true)
+                    CollegeData.writeMail(context, studentData.emailid)
+                    CollegeData.writeUserName(context, studentData.name)
 
                     Toast.makeText(context, "Login Sucessfully", Toast.LENGTH_SHORT).show()
                     context.startActivity(Intent(context, FacultyHomeActivity::class.java))

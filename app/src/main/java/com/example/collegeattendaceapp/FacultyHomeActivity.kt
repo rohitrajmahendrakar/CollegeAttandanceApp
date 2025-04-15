@@ -1,6 +1,9 @@
 package com.example.collegeattendaceapp
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,7 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class FacultyHomeActivity : AppCompatActivity() {
+class FacultyHomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -48,7 +52,7 @@ class FacultyHomeActivity : AppCompatActivity() {
 @Composable
 fun BookingSharingHomeActivity()
 {
-//    val context = LocalContext.current as Activity
+    val context = LocalContext.current as Activity
 
     Column(
         modifier = Modifier
@@ -103,13 +107,12 @@ fun BookingSharingHomeActivity()
                         )
                         .padding(horizontal = 6.dp, vertical = 12.dp)
                         .clickable {
-//                            context.startActivity(
-//                                Intent(
-//                                    context,
-//                                    QuizCategoriesActivity::class.java
-//                                )
-//                            )
-
+                            context.startActivity(
+                                Intent(
+                                    context,
+                                    MarkAttendanceActivity::class.java
+                                )
+                            )
                         }
 
 
@@ -362,12 +365,12 @@ fun BookingSharingHomeActivity()
                         )
                         .padding(horizontal = 6.dp, vertical = 12.dp)
                         .clickable {
-//                            context.startActivity(
-//                                Intent(
-//                                    context,
-//                                    PopularQuizActivity::class.java
-//                                )
-//                            )
+                            context.startActivity(
+                                Intent(
+                                    context,
+                                    ProfileActivity::class.java
+                                )
+                            )
 
                         }
 
