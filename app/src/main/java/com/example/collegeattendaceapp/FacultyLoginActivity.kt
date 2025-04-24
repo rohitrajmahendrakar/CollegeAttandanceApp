@@ -219,6 +219,7 @@ fun loginUser(facultyDetails: FacultyDetails, context: Context) {
                     CollegeData.writeLS(context, true)
                     CollegeData.writeMail(context, studentData.emailid)
                     CollegeData.writeUserName(context, studentData.name)
+                    CollegeData.saveStudentPhoto(context,studentData.profileImage)
 
                     Toast.makeText(context, "Login Sucessfully", Toast.LENGTH_SHORT).show()
                     context.startActivity(Intent(context, FacultyHomeActivity::class.java))

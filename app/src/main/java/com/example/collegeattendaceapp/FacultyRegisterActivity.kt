@@ -1,15 +1,25 @@
 package com.example.collegeattendaceapp
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.util.Base64
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +27,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -32,10 +46,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import coil.compose.rememberAsyncImagePainter
 import com.google.firebase.database.FirebaseDatabase
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 class FacultyRegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,7 +78,8 @@ fun RegistrationScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.white)),
+            .background(color = colorResource(id = R.color.white))
+            .verticalScroll(rememberScrollState()),
     ) {
 
         Column(
@@ -72,17 +93,21 @@ fun RegistrationScreen() {
                 text = "Register",
                 color = colorResource(id = R.color.p1),
                 style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(bottom = 4.dp).align(Alignment.CenterHorizontally)
+                modifier = Modifier
+                    .padding(bottom = 4.dp)
+                    .align(Alignment.CenterHorizontally)
             )
 
             Text(
                 text = "Hello, Welcome!",
                 color = colorResource(id = R.color.p1),
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(bottom = 32.dp).align(Alignment.CenterHorizontally)
+                modifier = Modifier
+                    .padding(bottom = 32.dp)
+                    .align(Alignment.CenterHorizontally)
             )
 
-            Column (
+            Column(
                 modifier = Modifier
                     .background(
                         color = colorResource(id = R.color.white),
@@ -98,6 +123,8 @@ fun RegistrationScreen() {
                 )
             {
 
+                UploadDonorImage()
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "Username",
                     color = colorResource(id = R.color.black),
@@ -180,14 +207,27 @@ fun RegistrationScreen() {
                                     userLocation,
                                     userpassword
                                 )
-                                registerUser(facultyDetails,context);
+
+                                val inputStream =
+                                    context.contentResolver.openInputStream(DonorPhoto.selImageUri)
+                                val bitmap = BitmapFactory.decodeStream(inputStream)
+                                val outputStream = ByteArrayOutputStream()
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                                val base64Image =
+                                    Base64.encodeToString(
+                                        outputStream.toByteArray(),
+                                        Base64.DEFAULT
+                                    )
+
+                                facultyDetails.profileImage = base64Image
+
+                                registerUser(facultyDetails, context)
                             }
 
                         }
                     },
                     modifier = Modifier
-                        .fillMaxWidth()
-                    ,
+                        .fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.p2),
@@ -260,14 +300,103 @@ fun registerUser(facultyDetails: FacultyDetails, context: Context) {
 }
 
 data class FacultyDetails(
-    var name : String = "",
-    var emailid : String = "",
-    var location : String = "",
-    var password: String = ""
+    var name: String = "",
+    var emailid: String = "",
+    var location: String = "",
+    var password: String = "",
+    var profileImage: String = ""
 )
 
 @Preview(showBackground = true)
 @Composable
 fun RegistrationScreenPreview() {
     RegistrationScreen()
+}
+
+fun decodeBase64ToBitmap(base64String: String): Bitmap? {
+    val decodedString = Base64.decode(base64String, Base64.DEFAULT)
+    val originalBitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+    return originalBitmap
+}
+
+
+@Composable
+fun UploadDonorImage() {
+    val activityContext = LocalContext.current
+
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val captureImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { success ->
+            if (success) {
+                imageUri = getImageUri(activityContext)
+                DonorPhoto.selImageUri = imageUri as Uri
+                DonorPhoto.isImageSelected = true
+            } else {
+                DonorPhoto.isImageSelected = false
+                Toast.makeText(activityContext, "Capture Failed", Toast.LENGTH_SHORT).show()
+            }
+        }
+    )
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                Toast.makeText(activityContext, "Permission Granted", Toast.LENGTH_SHORT).show()
+                captureImageLauncher.launch(getImageUri(activityContext)) // Launch the camera
+            } else {
+                Toast.makeText(activityContext, "Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    )
+
+    Column(
+        modifier = Modifier.size(100.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = if (imageUri != null) {
+                rememberAsyncImagePainter(model = imageUri)
+            } else {
+                painterResource(id = R.drawable.ic_add_image)
+            },
+            contentDescription = "Captured Image",
+            modifier = Modifier
+                .width(100.dp)
+                .height(100.dp)
+                .clickable {
+                    if (ContextCompat.checkSelfPermission(
+                            activityContext,
+                            Manifest.permission.CAMERA
+                        ) == PackageManager.PERMISSION_GRANTED
+                    ) {
+                        captureImageLauncher.launch(getImageUri(activityContext))
+                    } else {
+                        permissionLauncher.launch(Manifest.permission.CAMERA)
+                    }
+                }
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        if (imageUri == null) {
+            Text(text = "Tap the image to capture")
+        }
+    }
+}
+
+fun getImageUri(activityContext: Context): Uri {
+    val file = File(activityContext.filesDir, "captured_image.jpg")
+    return FileProvider.getUriForFile(
+        activityContext,
+        "${activityContext.packageName}.fileprovider",
+        file
+    )
+}
+
+
+object DonorPhoto {
+    lateinit var selImageUri: Uri
+    var isImageSelected = false
 }

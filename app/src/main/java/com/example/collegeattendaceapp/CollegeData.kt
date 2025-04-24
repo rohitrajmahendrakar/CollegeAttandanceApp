@@ -39,5 +39,16 @@ object CollegeData {
         return userLogin.getString("USERMAIL", "")!!
     }
 
+    fun saveStudentPhoto(context: Context, value: String) {
+        val userLogin = context.getSharedPreferences("USER_DETAILS", Context.MODE_PRIVATE)
+        val editor = userLogin.edit()
+        editor.putString("PHOTO", value).apply()
+    }
+
+    fun getStudentPhoto(context: Context): String {
+        val userLogin = context.getSharedPreferences("USER_DETAILS", Context.MODE_PRIVATE)
+        return userLogin.getString("PHOTO", "")!!
+    }
+
 
 }

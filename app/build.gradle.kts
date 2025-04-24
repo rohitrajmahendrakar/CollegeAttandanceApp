@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -71,4 +72,18 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.firebase.database.ktx)
+
+    implementation("com.google.maps.android:maps-compose:2.11.4")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+
+//    implementation("com.github.tehras:charts:0.2.4")
+
+//    implementation("com.github.smarttoolfactory:compose-charts:1.0.0-beta03") // Check for latest version
+
+
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+
+
+
 }

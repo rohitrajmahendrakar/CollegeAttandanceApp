@@ -21,6 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +41,7 @@ class ProfileActivity : ComponentActivity() {
             val userEmail = CollegeData.readMail(this)
 
             ProfileScreen(
-                userName, userEmail,R.drawable.profile
+                userName, userEmail
             )
 
         }
@@ -50,8 +53,9 @@ class ProfileActivity : ComponentActivity() {
 fun ProfileScreen(
     name: String = "John Doe",
     email: String = "johndoe@example.com",
-    imageResId: Int  // replace with actual profile image resource
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -95,12 +99,24 @@ fun ProfileScreen(
 
 
             // Profile Image
+//            Image(
+//                painter = painterResource(id = imageResId),
+//                contentDescription = "Profile Image",
+//                modifier = Modifier
+//                    .size(100.dp)
+//                    .clip(CircleShape)
+//            )
+
+            val profileImage = CollegeData.getStudentPhoto(context)
+
             Image(
-                painter = painterResource(id = imageResId),
-                contentDescription = "Profile Image",
+                bitmap = decodeBase64ToBitmap(profileImage)!!.asImageBitmap(),
+                contentDescription = "Student Image",
                 modifier = Modifier
                     .size(100.dp)
-                    .clip(CircleShape)
+                    .padding(end = 8.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
             )
 
             Spacer(modifier = Modifier.height(16.dp))

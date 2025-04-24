@@ -157,12 +157,12 @@ fun BookingSharingHomeActivity()
                         )
                         .padding(horizontal = 6.dp, vertical = 12.dp)
                         .clickable {
-//                            context.startActivity(
-//                                Intent(
-//                                    context,
-//                                    PopularQuizActivity::class.java
-//                                )
-//                            )
+                            context.startActivity(
+                                Intent(
+                                    context,
+                                    ViewAttendanceHistoryActivity::class.java
+                                )
+                            )
 
                         }
 
@@ -181,7 +181,7 @@ fun BookingSharingHomeActivity()
                     Text(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally),
-                        text = "Add\nStudents",
+                        text = "Track\nAttendance",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleSmall.copy(
                             color = Color.White,
@@ -207,12 +207,12 @@ fun BookingSharingHomeActivity()
                         )
                         .padding(horizontal = 6.dp, vertical = 12.dp)
                         .clickable {
-//                            context.startActivity(
-//                                Intent(
-//                                    context,
-//                                    PopularQuizActivity::class.java
-//                                )
-//                            )
+                            context.startActivity(
+                                Intent(
+                                    context,
+                                    AttendancePercentageActivity::class.java
+                                )
+                            )
 
                         }
 
@@ -231,7 +231,7 @@ fun BookingSharingHomeActivity()
                     Text(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally),
-                        text = "Manage\nAttendance",
+                        text = "Total\nAttendance",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleSmall.copy(
                             color = Color.White,
@@ -263,12 +263,12 @@ fun BookingSharingHomeActivity()
                         )
                         .padding(horizontal = 6.dp, vertical = 12.dp)
                         .clickable {
-//                            context.startActivity(
-//                                Intent(
-//                                    context,
-//                                    QuizResultActivity::class.java
-//                                )
-//                            )
+                            context.startActivity(
+                                Intent(
+                                    context,
+                                    CourseAttendanceActivity::class.java
+                                )
+                            )
 
                         }
 
@@ -288,7 +288,7 @@ fun BookingSharingHomeActivity()
                     Text(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally),
-                        text = "Delete\nAttendance",
+                        text = "Attendance\nBy Course",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleSmall.copy(
                             color = Color.White,
@@ -313,12 +313,12 @@ fun BookingSharingHomeActivity()
                             shape = RoundedCornerShape(6.dp)
                         )
                         .clickable {
-//                            context.startActivity(
-//                                Intent(
-//                                    context,
-//                                    UserDataActivity::class.java
-//                                )
-//                            )
+                            context.startActivity(
+                                Intent(
+                                    context,
+                                    GraphAnalysisActivity::class.java
+                                )
+                            )
 
                         }
                         .padding(horizontal = 6.dp, vertical = 12.dp)
@@ -339,7 +339,7 @@ fun BookingSharingHomeActivity()
                     Text(
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally),
-                        text = "View\nSummary",
+                        text = "Graph\nAnalysis",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.titleSmall.copy(
                             color = Color.White,
