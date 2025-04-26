@@ -1,5 +1,6 @@
 package com.example.collegeattendaceapp
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +9,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,7 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +61,8 @@ fun OverallAttendancePercentageScreen(email: String) {
 
     var totalClasses by remember { mutableIntStateOf(0) }
     var presentClasses by remember { mutableIntStateOf(0) }
+
+    val context = LocalContext.current
 
     LaunchedEffect(email) {
         val emailKey = email.replace(".", ",")
@@ -102,7 +108,10 @@ fun OverallAttendancePercentageScreen(email: String) {
         ) {
 
             Image(
-                modifier = Modifier.size(36.dp),
+                modifier = Modifier.size(36.dp).clickable {
+                    (context as Activity).finish()
+
+                },
                 painter = painterResource(id = R.drawable.baseline_arrow_back_36),
                 contentDescription = "Back",
             )

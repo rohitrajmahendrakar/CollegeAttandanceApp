@@ -1,5 +1,6 @@
 package com.example.collegeattendaceapp
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -55,6 +58,8 @@ class GraphAnalysisActivity : ComponentActivity() {
 @Composable
 fun GraphAnalysisScreen(email: String) {
     val courseStats = remember { mutableStateMapOf<String, Triple<Int, Int, Int>>() }
+
+    val context = LocalContext.current
 
     LaunchedEffect(email) {
         val emailKey = email.replace(".", ",")
@@ -102,7 +107,9 @@ fun GraphAnalysisScreen(email: String) {
         ) {
 
             Image(
-                modifier = Modifier.size(36.dp),
+                modifier = Modifier.size(36.dp).clickable {
+                    (context as Activity).finish()
+                },
                 painter = painterResource(id = R.drawable.baseline_arrow_back_36),
                 contentDescription = "Back",
             )
@@ -127,32 +134,7 @@ fun GraphAnalysisScreen(email: String) {
 
 
             AttendanceCanvasBarGraph(courseStats)
-            /*
-            courseStats.forEach { (course, triple) ->
-                val (present, absent, total) = triple
-                val percentage = coursePercentages[course] ?: 0.0
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    elevation = CardDefaults.cardElevation(4.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text("Course: $course", fontWeight = FontWeight.Bold)
-                        Text("Total Classes: $total")
-                        Text("✅ Present: $present")
-                        Text("❌ Absent: $absent")
-                        Text("📊 Attendance: ${"%.2f".format(percentage)}%", fontWeight = FontWeight.Medium)
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        // Optional: Attendance bar
-                        AttendanceBar(total = total, present = present)
-                    }
-                }
-            }
-            */
         }
     }
 }
@@ -165,11 +147,21 @@ fun AttendanceCanvasBarGraph(courseStats: Map<String, Triple<Int, Int, Int>>) {
             .padding(16.dp)
     ) {
 
-        courseStats.forEach { (course, stats) ->
-            val (present, _, total) = stats
-            val percent = if (total > 0) (present.toFloat() / total) * 100 else 0f
-            AttendanceBarRow(course, percent)
-            Spacer(modifier = Modifier.height(16.dp))
+        if(courseStats.isNotEmpty()) {
+            courseStats.forEach { (course, stats) ->
+                val (present, _, total) = stats
+                val percent = if (total > 0) (present.toFloat() / total) * 100 else 0f
+                AttendanceBarRow(course, percent)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }else{
+            Text(
+                modifier = Modifier.fillMaxWidth().padding(12.dp),
+                text = "No Attendance Marked",
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
+                color = Color(0xFFFFA000)
+            )
         }
     }
 }

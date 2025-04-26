@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -118,11 +117,10 @@ fun RegistrationScreen() {
                         color = colorResource(id = R.color.white),
                         shape = RoundedCornerShape(6.dp)
                     )
-                    .padding(16.dp),
+                    .padding(16.dp)
 
-                )
+            )
             {
-
                 UploadDonorImage()
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
@@ -191,14 +189,37 @@ fun RegistrationScreen() {
                 Button(
                     onClick = {
                         when {
+                            userName.isEmpty() -> {
+                                Toast.makeText(
+                                    context,
+                                    " Please Enter UserName",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
                             useremail.isEmpty() -> {
-//                            Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT)
+                                    .show()
                             }
 
                             userpassword.isEmpty() -> {
-//                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
-//                                .show()
+                                Toast.makeText(
+                                    context,
+                                    " Please Enter Password",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
                             }
+
+                            userLocation.isEmpty() -> {
+                                Toast.makeText(
+                                    context,
+                                    " Please Enter Location",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                            }
+
 
                             else -> {
                                 val facultyDetails = FacultyDetails(
@@ -281,6 +302,8 @@ fun registerUser(facultyDetails: FacultyDetails, context: Context) {
             if (task.isSuccessful) {
                 Toast.makeText(context, "You Registered Successfully", Toast.LENGTH_SHORT)
                     .show()
+                context.startActivity(Intent(context, FacultyLoginActivity::class.java))
+                (context as Activity).finish()
 
             } else {
                 Toast.makeText(
@@ -353,7 +376,7 @@ fun UploadDonorImage() {
     )
 
     Column(
-        modifier = Modifier.size(100.dp),
+        modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

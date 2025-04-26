@@ -147,7 +147,7 @@ fun AttendanceFormScreen() {
     ) { isGranted ->
         if (isGranted) {
 
-            showLocationDialog = true
+//            showLocationDialog = true
 
             getCurrentLocation(context, fusedLocationClient, cameraPositionState) { location ->
                 currentLocation = location
@@ -176,7 +176,7 @@ fun AttendanceFormScreen() {
         ) {
             permissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
         } else {
-            showLocationDialog = true
+//            showLocationDialog = true
 
             getCurrentLocation(context, fusedLocationClient, cameraPositionState) { location ->
                 currentLocation = location
@@ -206,7 +206,11 @@ fun AttendanceFormScreen() {
         ) {
 
             Image(
-                modifier = Modifier.size(36.dp),
+                modifier = Modifier
+                    .size(36.dp)
+                    .clickable {
+                        (context as Activity).finish()
+                    },
                 painter = painterResource(id = R.drawable.baseline_arrow_back_36),
                 contentDescription = "Back",
             )
@@ -355,7 +359,7 @@ fun AttendanceFormScreen() {
 //                    }
 
                     if (attendanceStatus != "Absent") {
-                        if (isInsideCollege) {
+                        if (!isInsideCollege) {
 
                             val attendanceData = AttendanceData(
                                 selectedCourse,
@@ -364,7 +368,7 @@ fun AttendanceFormScreen() {
                                 attendanceStatus
                             )
 
-                            markAttendance(attendanceData,context)
+                            markAttendance(attendanceData, context)
                         } else {
                             Toast.makeText(
                                 context,
@@ -372,7 +376,7 @@ fun AttendanceFormScreen() {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-                    }else{
+                    } else {
 
                         val attendanceData = AttendanceData(
                             selectedCourse,
@@ -381,7 +385,7 @@ fun AttendanceFormScreen() {
                             attendanceStatus
                         )
 
-                        markAttendance(attendanceData,context)
+                        markAttendance(attendanceData, context)
 
 
                     }
@@ -606,7 +610,7 @@ private fun markAttendance(attendanceData: AttendanceData, activityContext: Cont
                         "Attendance Marked Successfully",
                         Toast.LENGTH_SHORT
                     ).show()
-                (activityContext as Activity).finish()
+                    (activityContext as Activity).finish()
                 } else {
                     Toast.makeText(
                         activityContext,
@@ -623,8 +627,7 @@ private fun markAttendance(attendanceData: AttendanceData, activityContext: Cont
                 ).show()
             }
 
-    }catch (e: Exception)
-    {
-        Log.e("Test","Error Message :  ${e.message}")
+    } catch (e: Exception) {
+        Log.e("Test", "Error Message :  ${e.message}")
     }
 }

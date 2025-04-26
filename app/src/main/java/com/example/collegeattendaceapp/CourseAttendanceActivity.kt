@@ -1,5 +1,6 @@
 package com.example.collegeattendaceapp
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -8,6 +9,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +61,8 @@ class CourseAttendanceActivity : ComponentActivity() {
 fun AttendancePercentageByCourseScreen(email: String) {
     val courseStats =
         remember { mutableStateMapOf<String, Triple<Int, Int, Int>>() } // course -> (present, absent, total)
+
+    val context = LocalContext.current
 
     LaunchedEffect(email) {
         val emailKey = email.replace(".", ",")
@@ -96,7 +101,10 @@ fun AttendancePercentageByCourseScreen(email: String) {
                 .background(
                     color = colorResource(id = R.color.p3)
                 )
-                .padding(horizontal = 12.dp),
+                .padding(horizontal = 12.dp)
+                .clickable {
+                    (context as Activity).finish()
+                },
             verticalAlignment = Alignment.CenterVertically
         ) {
 
@@ -125,128 +133,97 @@ fun AttendancePercentageByCourseScreen(email: String) {
         ) {
             Spacer(Modifier.height(8.dp))
 
-            courseStats.forEach { (course, stats) ->
-                val (present, absent, total) = stats
-                val percentage = if (total > 0) (present * 100.0) / total else 0.0
+            if (courseStats.isNotEmpty()) {
+                courseStats.forEach { (course, stats) ->
+                    val (present, absent, total) = stats
+                    val percentage = if (total > 0) (present * 100.0) / total else 0.0
 
-                // Blinking animation setup
-                val isBlinking = percentage < 60
-                val alphaAnim = remember { Animatable(1f) }
+                    // Blinking animation setup
+                    val isBlinking = percentage < 60
+                    val alphaAnim = remember { Animatable(1f) }
 
-                if (isBlinking) {
-                    LaunchedEffect(course) {
-                        while (true) {
-                            alphaAnim.animateTo(0f, animationSpec = tween(500))
-                            alphaAnim.animateTo(1f, animationSpec = tween(500))
-                        }
-                    }
-                }
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp),
-                    elevation = CardDefaults.cardElevation(4.dp)
-                ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
-                        Text(
-                            text = "Course: $course",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text("Total Classes: $total")
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            Text(
-                                text = "📊 Attendance: ${"%.2f".format(percentage)}%",
-                                color = Color.Black,
-                                modifier = Modifier
-                            )
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            if (percentage > 80) {
-                                Text(
-                                    text = "Good Attendance",
-                                    color = Color(0xFF4CAF50),
-                                    modifier = Modifier
-                                )
-                            } else if (percentage < 80 && percentage > 40) {
-                                Text(
-                                    text = "Average Attendance",
-                                    color = Color(0xFFFFA000),
-                                    modifier = Modifier
-                                )
-                            } else {
-                                Text(
-                                    text = "Low Attendance",
-                                    color = if (isBlinking) Color.Red else Color.Unspecified,
-                                    modifier = if (isBlinking) Modifier.alpha(alphaAnim.value) else Modifier
-                                )
+                    if (isBlinking) {
+                        LaunchedEffect(course) {
+                            while (true) {
+                                alphaAnim.animateTo(0f, animationSpec = tween(500))
+                                alphaAnim.animateTo(1f, animationSpec = tween(500))
                             }
                         }
+                    }
+
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp),
+                        elevation = CardDefaults.cardElevation(4.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text(
+                                text = "Course: $course",
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text("Total Classes: $total")
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    text = "📊 Attendance: ${"%.2f".format(percentage)}%",
+                                    color = Color.Black,
+                                    modifier = Modifier
+                                )
+
+                                Spacer(modifier = Modifier.width(12.dp))
+
+                                if (percentage > 80) {
+                                    Text(
+                                        text = "Good Attendance",
+                                        color = Color(0xFF4CAF50),
+                                        modifier = Modifier
+                                    )
+                                } else if (percentage < 80 && percentage > 40) {
+                                    Text(
+                                        text = "Average Attendance",
+                                        color = Color(0xFFFFA000),
+                                        modifier = Modifier
+                                    )
+                                } else {
+                                    Text(
+                                        text = "Low Attendance",
+                                        color = if (isBlinking) Color.Red else Color.Unspecified,
+                                        modifier = if (isBlinking) Modifier.alpha(alphaAnim.value) else Modifier
+                                    )
+                                }
+                            }
 
 
-                        Spacer(Modifier.height(12.dp))
+                            Spacer(Modifier.height(12.dp))
 
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            Text(text = "Present : $present")
-                            Spacer(modifier = Modifier.weight(1f))
-                            Text(text = "Absent : ${total - present}")
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                Text(text = "Present : $present")
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(text = "Absent : ${total - present}")
+                            }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            AttendanceBar(total, present)
                         }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        AttendanceBar(total, present)
                     }
                 }
+            } else {
+
+
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(12.dp),
+                    text = "No Attendance Marked",
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center,
+                    color = Color(0xFFFFA000)
+                )
             }
         }
-//        Column(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(12.dp)
-//        ) {
-//
-//            Spacer(Modifier.height(8.dp))
-//
-//            courseStats.forEach { (course, stats) ->
-//                val (present, absent, total) = stats
-//                val percentage = if (total > 0) (present * 100.0) / total else 0.0
-//
-//                Card(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(vertical = 6.dp),
-//                    elevation = CardDefaults.cardElevation(4.dp)
-//                ) {
-//                    Column(modifier = Modifier.padding(12.dp)) {
-//                        Text("Course: $course", fontWeight = FontWeight.Bold)
-//                        Spacer(modifier = Modifier.height(6.dp))
-//                        Text("Total Classes: $total")
-//                        Spacer(modifier = Modifier.height(6.dp))
-//
-////                    Text("✅ Present: $present", color = Color(0xFF388E3C))
-////                    Text("❌ Absent: $absent", color = Color(0xFFD32F2F))
-//                        Text("📊 Attendance: ${"%.2f".format(percentage)}%")
-//
-//                        Spacer(Modifier.height(12.dp))
-//
-//                        Row(
-//                            modifier = Modifier.fillMaxWidth()
-//                        ) {
-//                            Text(text = "Present : $present")
-//                            Spacer(modifier = Modifier.weight(1f))
-//                            Text(text = "Absent : ${total - present}")
-//                        }
-//                        AttendanceBar(total, present)
-//
-//                    }
-//                }
-//            }
-//        }
     }
 }
 

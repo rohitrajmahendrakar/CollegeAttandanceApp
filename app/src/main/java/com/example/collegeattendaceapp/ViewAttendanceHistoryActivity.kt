@@ -1,5 +1,6 @@
 package com.example.collegeattendaceapp
 
+import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -104,7 +106,9 @@ fun AttendanceHistoryScreen(viewModel: AttendanceViewModel) {
         ) {
 
             Image(
-                modifier = Modifier.size(36.dp),
+                modifier = Modifier.size(36.dp).clickable {
+                    (context as Activity).finish()
+                },
                 painter = painterResource(id = R.drawable.baseline_arrow_back_36),
                 contentDescription = "Back",
             )
