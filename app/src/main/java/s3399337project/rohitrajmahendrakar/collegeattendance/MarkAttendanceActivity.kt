@@ -1,4 +1,4 @@
-package com.example.collegeattendaceapp
+package s3399337project.rohitrajmahendrakar.collegeattendance
 
 import android.app.Activity
 import android.app.DatePickerDialog
@@ -21,11 +21,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -192,7 +195,7 @@ fun AttendanceFormScreen() {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize().padding(WindowInsets.systemBars.asPaddingValues())
     ) {
 
         Row(
@@ -320,14 +323,12 @@ fun AttendanceFormScreen() {
                 Text("Your Location : Pending")
             } else {
 
-//                18.024272, 79.536996 - me
-//                18.022868, 79.537687 - other
 
                 val isInLocation =
                     isWithinGeofence(
                         currentLocation!!.latitude,
                         currentLocation!!.longitude,
-                        18.024272, 79.536996
+                        51.546898, -0.023793
                     )
                 isInsideCollege = isInLocation
 
@@ -352,14 +353,10 @@ fun AttendanceFormScreen() {
             // Submit Button
             Button(
                 onClick = {
-//                    confirmationMessage = if (gpsStatus) {
-//                        "✅ Attendance marked as $attendanceStatus"
-//                    } else {
-//                        "❌ Unable to mark attendance - Out of location"
-//                    }
+
 
                     if (attendanceStatus != "Absent") {
-                        if (!isInsideCollege) {
+                        if (isInsideCollege) {
 
                             val attendanceData = AttendanceData(
                                 selectedCourse,
@@ -597,7 +594,7 @@ data class AttendanceData(
 private fun markAttendance(attendanceData: AttendanceData, activityContext: Context) {
 
     try {
-        val userEmail = CollegeData.readMail(activityContext)
+        val userEmail = CollegePreferences.getStudentEmail(activityContext)
         val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault())
         val orderId = dateFormat.format(Date())
 

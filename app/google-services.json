@@ -1,15 +1,16 @@
 {
   "project_info": {
     "project_number": "97539922851",
+    "firebase_url": "https://collegeattendanceapp-9fd23-default-rtdb.firebaseio.com",
     "project_id": "collegeattendanceapp-9fd23",
     "storage_bucket": "collegeattendanceapp-9fd23.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:97539922851:android:252c53fccb685916389816",
+        "mobilesdk_app_id": "1:97539922851:android:1fe9d9bbe92d799e389816",
         "android_client_info": {
-          "package_name": "com.example.collegeattendaceapp"
+          "package_name": "s3399337project.rohitrajmahendrakar.collegeattendance"
         }
       },
       "oauth_client": [],

@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.collegeattendaceapp"
+    namespace = "s3399337project.rohitrajmahendrakar.collegeattendance"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.collegeattendaceapp"
+        applicationId = "s3399337project.rohitrajmahendrakar.collegeattendance"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

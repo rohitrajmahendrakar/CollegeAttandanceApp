@@ -1,4 +1,4 @@
-package com.example.collegeattendaceapp
+package s3399337project.rohitrajmahendrakar.collegeattendance
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

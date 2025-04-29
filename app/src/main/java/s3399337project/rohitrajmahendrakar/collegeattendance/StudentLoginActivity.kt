@@ -1,4 +1,4 @@
-package com.example.collegeattendaceapp
+package s3399337project.rohitrajmahendrakar.collegeattendance
 
 import android.app.Activity
 import android.content.Context
@@ -7,18 +7,19 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,8 +38,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.database.FirebaseDatabase
 
 class FacultyLoginActivity : ComponentActivity() {
@@ -62,12 +61,12 @@ fun LoginScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = colorResource(id = R.color.white)),
+            .background(color = colorResource(id = R.color.white))
+            .padding(WindowInsets.systemBars.asPaddingValues()),
     ) {
 
         Column(
             modifier = Modifier.padding(16.dp),
-//            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             Spacer(modifier = Modifier.height(100.dp))
@@ -138,16 +137,16 @@ fun LoginScreen() {
                     onClick = {
                         when {
                             useremail.isEmpty() -> {
-                            Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, " We’ll need your email before moving ahead", Toast.LENGTH_SHORT).show()
                             }
 
                             userpassword.isEmpty() -> {
-                            Toast.makeText(context, " Please Enter Password", Toast.LENGTH_SHORT)
+                            Toast.makeText(context, "We’ll need your password before moving ahead", Toast.LENGTH_SHORT)
                                 .show()
                             }
 
                             else -> {
-                                val facultyDetails = FacultyDetails(
+                                val facultyDetails = StudentDetails(
                                     "",
                                     useremail,
                                     "",
@@ -205,21 +204,21 @@ fun LoginScreen() {
 }
 
 
-fun loginUser(facultyDetails: FacultyDetails, context: Context) {
+fun loginUser(facultyDetails: StudentDetails, context: Context) {
 
     val firebaseDatabase = FirebaseDatabase.getInstance()
-    val databaseReference = firebaseDatabase.getReference("FacultyDetails").child(facultyDetails.emailid.replace(".", ","))
+    val databaseReference = firebaseDatabase.getReference("StudentDetails").child(facultyDetails.emailid.replace(".", ","))
 
     databaseReference.get().addOnCompleteListener { task ->
         if (task.isSuccessful) {
-            val studentData = task.result?.getValue(FacultyDetails::class.java)
+            val studentData = task.result?.getValue(StudentDetails::class.java)
             if (studentData != null) {
                 if (studentData.password == facultyDetails.password) {
 
-                    CollegeData.writeLS(context, true)
-                    CollegeData.writeMail(context, studentData.emailid)
-                    CollegeData.writeUserName(context, studentData.name)
-                    CollegeData.saveStudentPhoto(context,studentData.profileImage)
+                    CollegePreferences.setLoginStatus(context, true)
+                    CollegePreferences.setStudentEmail(context, studentData.emailid)
+                    CollegePreferences.setStudentName(context, studentData.name)
+                    CollegePreferences.setStudentPhoto(context, studentData.profileImage)
 
                     Toast.makeText(context, "Login Sucessfully", Toast.LENGTH_SHORT).show()
                     context.startActivity(Intent(context, FacultyHomeActivity::class.java))

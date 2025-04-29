@@ -1,4 +1,4 @@
-package com.example.collegeattendaceapp
+package s3399337project.rohitrajmahendrakar.collegeattendance
 
 import android.app.Activity
 import android.os.Build
@@ -14,11 +14,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -40,8 +43,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.collegeattendaceapp.database.AttendanceViewModel
-import com.example.collegeattendaceapp.database.getLast30Days
+import s3399337project.rohitrajmahendrakar.collegeattendance.database.AttendanceViewModel
+import s3399337project.rohitrajmahendrakar.collegeattendance.database.getLast30Days
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -57,7 +60,6 @@ class ViewAttendanceHistoryActivity : ComponentActivity() {
 
             AttendanceHistoryScreen(AttendanceViewModel())
 
-//            AttendanceHistoryListScreen(email = CollegeData.readMail(this))
         }
     }
 }
@@ -93,7 +95,7 @@ fun AttendanceHistoryScreen(viewModel: AttendanceViewModel) {
     }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().padding(WindowInsets.systemBars.asPaddingValues())
     ) {
         Row(
             modifier = Modifier
@@ -203,138 +205,7 @@ fun AttendanceHistoryScreen(viewModel: AttendanceViewModel) {
             }
 
 
-//        LazyColumn(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(8.dp)
-//        ) {
-//            items(last30Days) { date ->
-//                val records = attendanceMap.value[date]
-//                Card(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(vertical = 4.dp),
-//                    elevation = CardDefaults.cardElevation(4.dp)
-//                ) {
-//                    Column(modifier = Modifier.padding(12.dp)) {
-//                        Text(
-//                            text = "Date: ${date.format(formatter)}",
-//                            style = MaterialTheme.typography.titleMedium
-//                        )
-//                        if (records.isNullOrEmpty()) {
-//                            Text(text = "Status: Not Marked", color = Color.Gray)
-//                        } else {
-//                            val presentCount = records.count { it.status == "Present" }
-//                            val absentCount = records.count { it.status == "Absent" }
-//                            Text(text = "✅ Present: $presentCount", color = Color(0xFF388E3C))
-//                            Text(text = "❌ Absent: $absentCount", color = Color(0xFFD32F2F))
-//                        }
-//                    }
-//                }
-//            }
-//        }
         }
     }
 }
 
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun AttendanceHistoryScreenOld(viewModel: AttendanceViewModel, userEmail: String) {
-    val context = LocalContext.current
-    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-
-    val attendanceList = remember { mutableStateOf<List<AttendanceData>>(emptyList()) }
-
-    LaunchedEffect(Unit) {
-        viewModel.fetchAttendanceHistory(context) { result ->
-            attendanceList.value = result
-        }
-    }
-
-
-    val last30Days = getLast30Days()
-
-//    LazyColumn(modifier = Modifier
-//        .fillMaxSize()
-//        .padding(8.dp)) {
-//        items(last30Days) { date ->
-//            val records = attendanceMap[date]
-//            Card(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(vertical = 4.dp),
-//                elevation = CardDefaults.cardElevation(4.dp)
-//            ) {
-//                Column(modifier = Modifier.padding(12.dp)) {
-//                    Text(
-//                        text = "Date: ${date.format(formatter)}",
-//                        style = MaterialTheme.typography.titleMedium
-//                    )
-//                    if (records.isNullOrEmpty()) {
-//                        Text(text = "Status: Not Marked", color = Color.Gray)
-//                    } else {
-//                        val presentCount = records.count { it.status == "Present" }
-//                        val absentCount = records.count { it.status == "Absent" }
-//                        Text(text = "✅ Present: $presentCount", color = Color(0xFF388E3C))
-//                        Text(text = "❌ Absent: $absentCount", color = Color(0xFFD32F2F))
-//                    }
-//                }
-//            }
-//        }
-//    }
-}
-
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun AttendanceHistoryListScreen(email: String) {
-    val attendanceList = remember { mutableStateListOf<AttendanceData>() }
-
-    LaunchedEffect(email) {
-        val emailKey = email.replace(".", ",")
-        val ref = FirebaseDatabase.getInstance().getReference("Attendance").child(emailKey)
-        val thirtyDaysAgo = LocalDate.now().minusDays(30)
-
-        ref.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                attendanceList.clear()
-                for (child in snapshot.children) {
-                    val data = child.getValue(AttendanceData::class.java)
-                    data?.let {
-                        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-                        val recordDate = LocalDate.parse(it.date, formatter)
-
-                        if (recordDate.isAfter(thirtyDaysAgo)) {
-                            attendanceList.add(it)
-                        }
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text("Attendance History (Last 30 Days)", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(8.dp))
-
-        LazyColumn {
-            items(attendanceList) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
-                        Text("Course: ${it.courseName}", fontWeight = FontWeight.Bold)
-                        Text("Date: ${it.date}")
-                        Text("Time: ${it.time}")
-                        Text("Status: ${it.status}")
-                    }
-                }
-            }
-        }
-    }
-}

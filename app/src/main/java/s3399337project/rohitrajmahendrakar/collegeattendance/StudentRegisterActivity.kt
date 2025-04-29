@@ -1,4 +1,4 @@
-package com.example.collegeattendaceapp
+package s3399337project.rohitrajmahendrakar.collegeattendance
 
 import android.Manifest
 import android.app.Activity
@@ -23,10 +23,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -78,12 +81,12 @@ fun RegistrationScreen() {
         modifier = Modifier
             .fillMaxSize()
             .background(color = colorResource(id = R.color.white))
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .padding(WindowInsets.systemBars.asPaddingValues()),
     ) {
 
         Column(
             modifier = Modifier.padding(16.dp),
-//            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             Spacer(modifier = Modifier.height(100.dp))
@@ -121,7 +124,7 @@ fun RegistrationScreen() {
 
             )
             {
-                UploadDonorImage()
+                AddStudentImage()
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "Username",
@@ -192,20 +195,20 @@ fun RegistrationScreen() {
                             userName.isEmpty() -> {
                                 Toast.makeText(
                                     context,
-                                    " Please Enter UserName",
+                                    "We’ll need your username before moving ahead",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
 
                             useremail.isEmpty() -> {
-                                Toast.makeText(context, " Please Enter Mail", Toast.LENGTH_SHORT)
+                                Toast.makeText(context, "We’ll need your email before moving ahead", Toast.LENGTH_SHORT)
                                     .show()
                             }
 
                             userpassword.isEmpty() -> {
                                 Toast.makeText(
                                     context,
-                                    " Please Enter Password",
+                                    "We’ll need your password before moving ahead",
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
@@ -214,7 +217,7 @@ fun RegistrationScreen() {
                             userLocation.isEmpty() -> {
                                 Toast.makeText(
                                     context,
-                                    " Please Enter Location",
+                                    "We’ll need your location before moving ahead",
                                     Toast.LENGTH_SHORT
                                 )
                                     .show()
@@ -222,7 +225,7 @@ fun RegistrationScreen() {
 
 
                             else -> {
-                                val facultyDetails = FacultyDetails(
+                                val facultyDetails = StudentDetails(
                                     userName,
                                     useremail,
                                     userLocation,
@@ -230,7 +233,7 @@ fun RegistrationScreen() {
                                 )
 
                                 val inputStream =
-                                    context.contentResolver.openInputStream(DonorPhoto.selImageUri)
+                                    context.contentResolver.openInputStream(StudentPhoto.selImageUri)
                                 val bitmap = BitmapFactory.decodeStream(inputStream)
                                 val outputStream = ByteArrayOutputStream()
                                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
@@ -291,10 +294,10 @@ fun RegistrationScreen() {
 
 }
 
-fun registerUser(facultyDetails: FacultyDetails, context: Context) {
+fun registerUser(facultyDetails: StudentDetails, context: Context) {
 
     val firebaseDatabase = FirebaseDatabase.getInstance()
-    val databaseReference = firebaseDatabase.getReference("FacultyDetails")
+    val databaseReference = firebaseDatabase.getReference("StudentDetails")
 
     databaseReference.child(facultyDetails.emailid.replace(".", ","))
         .setValue(facultyDetails)
@@ -322,7 +325,7 @@ fun registerUser(facultyDetails: FacultyDetails, context: Context) {
         }
 }
 
-data class FacultyDetails(
+data class StudentDetails(
     var name: String = "",
     var emailid: String = "",
     var location: String = "",
@@ -344,7 +347,7 @@ fun decodeBase64ToBitmap(base64String: String): Bitmap? {
 
 
 @Composable
-fun UploadDonorImage() {
+fun AddStudentImage() {
     val activityContext = LocalContext.current
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -354,10 +357,10 @@ fun UploadDonorImage() {
         onResult = { success ->
             if (success) {
                 imageUri = getImageUri(activityContext)
-                DonorPhoto.selImageUri = imageUri as Uri
-                DonorPhoto.isImageSelected = true
+                StudentPhoto.selImageUri = imageUri as Uri
+                StudentPhoto.isImageSelected = true
             } else {
-                DonorPhoto.isImageSelected = false
+                StudentPhoto.isImageSelected = false
                 Toast.makeText(activityContext, "Capture Failed", Toast.LENGTH_SHORT).show()
             }
         }
@@ -419,7 +422,7 @@ fun getImageUri(activityContext: Context): Uri {
 }
 
 
-object DonorPhoto {
+object StudentPhoto {
     lateinit var selImageUri: Uri
     var isImageSelected = false
 }

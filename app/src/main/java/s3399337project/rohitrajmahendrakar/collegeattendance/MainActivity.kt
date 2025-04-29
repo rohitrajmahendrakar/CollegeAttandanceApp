@@ -1,4 +1,4 @@
-package com.example.collegeattendaceapp
+package s3399337project.rohitrajmahendrakar.collegeattendance
 
 import android.app.Activity
 import android.content.Intent
@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -34,7 +33,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.collegeattendaceapp.ui.theme.CollegeAttendaceAppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -68,10 +66,7 @@ fun FacultyStatusCheck() {
         SplashScreen()
 
     } else {
-
-        val currentStatus = CollegeData.readLS(context)
-
-        if(currentStatus)
+        if(CollegePreferences.getLoginStatus(context))
         {
             context.startActivity(Intent(context, FacultyHomeActivity::class.java))
             context.finish()
@@ -132,7 +127,7 @@ fun SplashScreen() {
             {
                 Image(
                     modifier = Modifier.size(200.dp, 200.dp),
-                    painter = painterResource(id = R.drawable.college),
+                    painter = painterResource(id = R.drawable.college_attendace_app_logo),
                     contentDescription = "College Attendance App",
                 )
 

@@ -1,4 +1,4 @@
-package com.example.collegeattendaceapp
+package s3399337project.rohitrajmahendrakar.collegeattendance
 
 import android.app.Activity
 import android.os.Bundle
@@ -14,11 +14,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -50,7 +53,7 @@ class GraphAnalysisActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            GraphAnalysisScreen(email = CollegeData.readMail(this))
+            GraphAnalysisScreen(email = CollegePreferences.getStudentEmail(this))
         }
     }
 }
@@ -94,7 +97,7 @@ fun GraphAnalysisScreen(email: String) {
         if (total > 0) (present * 100.0) / total else 0.0
     }
 
-    Column(modifier = Modifier) {
+    Column(modifier = Modifier.padding(WindowInsets.systemBars.asPaddingValues())) {
 
         Row(
             modifier = Modifier

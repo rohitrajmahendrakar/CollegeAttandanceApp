@@ -1,4 +1,4 @@
-package com.example.collegeattendaceapp.ui.theme
+package s3399337project.rohitrajmahendrakar.collegeattendance.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

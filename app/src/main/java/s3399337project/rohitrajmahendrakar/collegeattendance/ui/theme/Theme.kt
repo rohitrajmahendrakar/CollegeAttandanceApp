@@ -1,6 +1,5 @@
-package com.example.collegeattendaceapp.ui.theme
+package s3399337project.rohitrajmahendrakar.collegeattendance.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

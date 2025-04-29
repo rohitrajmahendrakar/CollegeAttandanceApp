@@ -1,19 +1,18 @@
-package com.example.collegeattendaceapp.database
+package s3399337project.rohitrajmahendrakar.collegeattendance.database
 
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
-import com.example.collegeattendaceapp.AttendanceData
+import s3399337project.rohitrajmahendrakar.collegeattendance.AttendanceData
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import com.example.collegeattendaceapp.CollegeData
+import s3399337project.rohitrajmahendrakar.collegeattendance.CollegePreferences
 
 class AttendanceViewModel : ViewModel() {
 
@@ -28,7 +27,7 @@ class AttendanceViewModel : ViewModel() {
         context: Context,
         onResult: (List<AttendanceData>) -> Unit
     ) {
-        val email = CollegeData.readMail(context).replace(".", ",")
+        val email = CollegePreferences.getStudentEmail(context).replace(".", ",")
         val reference = FirebaseDatabase.getInstance().getReference("Attendance").child(email)
 
         reference.addListenerForSingleValueEvent(object : ValueEventListener {

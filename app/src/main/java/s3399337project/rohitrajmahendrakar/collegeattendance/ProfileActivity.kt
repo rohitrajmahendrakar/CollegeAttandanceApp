@@ -1,4 +1,4 @@
-package com.example.collegeattendaceapp
+package s3399337project.rohitrajmahendrakar.collegeattendance
 
 import android.app.Activity
 import android.content.Intent
@@ -44,8 +44,8 @@ class ProfileActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            val userName = CollegeData.readUserName(this)
-            val userEmail = CollegeData.readMail(this)
+            val userName = CollegePreferences.getStudentName(this)
+            val userEmail = CollegePreferences.getStudentEmail(this)
 
             ProfileScreen(
                 userName, userEmail
@@ -108,7 +108,7 @@ fun ProfileScreen(
         ) {
 
 
-            val profileImage = CollegeData.getStudentPhoto(context)
+            val profileImage = CollegePreferences.getStudentPhoto(context)
 
             Image(
                 bitmap = decodeBase64ToBitmap(profileImage)!!.asImageBitmap(),
@@ -143,7 +143,7 @@ fun ProfileScreen(
             Text(
                 modifier = Modifier
                     .clickable {
-                        CollegeData.writeLS(context, false)
+                        CollegePreferences.setLoginStatus(context, false)
 
                         context.startActivity(Intent(context, FacultyLoginActivity::class.java))
                         (context as Activity).finish()
@@ -179,5 +179,4 @@ fun ProfileScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewProfileScreen() {
-//    ProfileScreen()
 }
